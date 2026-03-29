@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -182,10 +182,59 @@ tbody tr:last-child td{border-bottom:none}
 .q-feedback.show{display:block;}
 .q-feedback.ok{background:var(--green-dim);color:var(--green);border:1px solid rgba(74,222,128,0.2);}
 .q-feedback.fail{background:var(--red-dim);color:var(--red);border:1px solid rgba(248,113,113,0.2);}
+
+/* ============================================================
+   HAMBURGER BUTTON
+   ============================================================ */
+.hamburger{display:none;position:fixed;top:0.75rem;left:0.75rem;z-index:200;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:0.45rem 0.55rem;cursor:pointer;flex-direction:column;gap:4px;}
+.hamburger span{display:block;width:20px;height:2px;background:var(--text2);border-radius:2px;transition:all 0.3s;}
+.hamburger.open span:nth-child(1){transform:translateY(6px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
+
+/* ============================================================
+   SIDEBAR OVERLAY (mobile)
+   ============================================================ */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99;opacity:0;transition:opacity 0.3s;}
+.sidebar-overlay.visible{opacity:1;}
+
+/* ============================================================
+   MOBILE RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .hamburger{display:flex;}
+  .sidebar-overlay{display:block;pointer-events:none;}
+  .sidebar-overlay.visible{pointer-events:all;}
+  .sidebar{position:fixed;top:0;left:0;height:100vh;z-index:100;transform:translateX(-100%);transition:transform 0.3s ease;}
+  .sidebar.open{transform:translateX(0);}
+  .shell{display:block;}
+  .main{padding:0 1rem 5rem;max-width:100%;}
+  .topbar{padding:0.6rem 1rem 0.6rem 3.5rem;margin:0;}
+  .topbar .tb-left{font-size:12px;}
+  .hero{padding:3rem 0 2rem;}
+  .hero h1{font-size:clamp(1.8rem,7vw,2.8rem);}
+  .hero-stats{gap:0.7rem;}
+  .stat-pill{font-size:12px;padding:0.4rem 0.7rem;}
+  .ch-header{padding:1.4rem 1.2rem 1.2rem;}
+  .ch-header h2{font-size:1.4rem;}
+  .formula-body{font-size:0.82rem;padding:1rem;}
+  .mini-quiz{padding:1rem;}
+}
+@media (max-width: 480px) {
+  .hero h1{font-size:1.7rem;}
+  .hero-stats{flex-direction:column;gap:0.5rem;}
+  .stat-pill{width:fit-content;}
+  .ch-header h2{font-size:1.2rem;}
+}
 </style>
-   <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/32/5832/5832416.png">
+<link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/32/5832/5832416.png">
 </head>
 <body>
+
+<button class="hamburger" id="hamburger" aria-label="Toggle menu">
+  <span></span><span></span><span></span>
+</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <div class="shell">
 
@@ -849,6 +898,71 @@ tbody tr:last-child td{border-bottom:none}
   </section>
 
 </div></div><script>
+/* ============================================================
+   LOCALSTORAGE — PROGRESS PERSISTENCE
+   ============================================================ */
+const STORAGE_KEY = 'econ121_progress';
+
+function saveProgress() {
+  const done = [];
+  document.querySelectorAll('.check-btn.checked').forEach(btn => {
+    const section = btn.closest('.topic');
+    if (section) done.push(section.id);
+  });
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(done));
+}
+
+function loadProgress() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    saved.forEach(id => {
+      const section = document.getElementById(id);
+      if (!section) return;
+      const btn = section.querySelector('.check-btn');
+      if (btn) btn.classList.add('checked');
+      const navItem = document.querySelector(`.nav-item[data-target="${id}"]`);
+      if (navItem) navItem.classList.add('done');
+    });
+  } catch(e) {}
+}
+
+/* ============================================================
+   HAMBURGER / SIDEBAR TOGGLE
+   ============================================================ */
+const hamburger = document.getElementById('hamburger');
+const sidebar   = document.getElementById('sidebar');
+const overlay   = document.getElementById('sidebarOverlay');
+
+function openSidebar() {
+  sidebar.classList.add('open');
+  overlay.classList.add('visible');
+  hamburger.classList.add('open');
+}
+
+function closeSidebar() {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('visible');
+  hamburger.classList.remove('open');
+}
+
+hamburger.addEventListener('click', () => {
+  sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+});
+
+overlay.addEventListener('click', closeSidebar);
+
+/* Close sidebar when a nav item is clicked on mobile */
+document.querySelectorAll('.nav-item[data-target]').forEach(item => {
+  item.addEventListener('click', () => {
+    const target = document.getElementById(item.dataset.target);
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (window.innerWidth <= 768) closeSidebar();
+  });
+});
+
+/* ============================================================
+   INTERSECTION OBSERVER — SCROLL SPY
+   ============================================================ */
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if (e.isIntersecting) {
@@ -864,36 +978,38 @@ const observer = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.topic').forEach(t => observer.observe(t));
 
-document.querySelectorAll('.nav-item[data-target]').forEach(item => {
-  item.addEventListener('click', () => {
-    const target = document.getElementById(item.dataset.target);
-    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
-});
-
+/* ============================================================
+   PROGRESS RING & BAR
+   ============================================================ */
 const totalTopics = document.querySelectorAll('.topic').length;
 document.getElementById('totalCount').textContent = totalTopics;
 
 function updateProgress() {
   const done = document.querySelectorAll('.check-btn.checked').length;
-  const pct = Math.round((done / totalTopics) * 100);
+  const pct  = Math.round((done / totalTopics) * 100);
   document.getElementById('doneCount').textContent = done;
-  document.getElementById('topPct').textContent = pct + '%';
-  document.getElementById('topBar').style.width = pct + '%';
+  document.getElementById('topPct').textContent    = pct + '%';
+  document.getElementById('topBar').style.width    = pct + '%';
   const circumference = 2 * Math.PI * 16;
   const offset = circumference - (pct / 100) * circumference;
   document.getElementById('ringFill').style.strokeDashoffset = offset;
   document.getElementById('ringPct').textContent = pct + '%';
 }
-updateProgress();
 
+/* ============================================================
+   TOPIC DONE TOGGLE
+   ============================================================ */
 function toggleDone(btn, id) {
   btn.classList.toggle('checked');
   const navItem = document.querySelector(`.nav-item[data-target="${id}"]`);
   if (navItem) navItem.classList.toggle('done');
   updateProgress();
+  saveProgress();
 }
 
+/* ============================================================
+   QUIZ ANSWER CHECK
+   ============================================================ */
 function checkAnswer(btn, isCorrect, feedback) {
   const options = btn.parentElement.querySelectorAll('.opt');
   options.forEach(opt => opt.disabled = true);
@@ -902,6 +1018,12 @@ function checkAnswer(btn, isCorrect, feedback) {
   fbDiv.textContent = (isCorrect ? '✅ ' : '❌ ') + feedback;
   fbDiv.className = 'q-feedback show ' + (isCorrect ? 'ok' : 'fail');
 }
+
+/* ============================================================
+   INIT
+   ============================================================ */
+loadProgress();
+updateProgress();
 </script>
 </body>
 </html>
