@@ -1,0 +1,906 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECON 121 — Macroeconomics (University of Malakand Interactive Edition)</title>
+<style>
+/* ============================================================
+   FONTS
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500;600&display=swap');
+
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root {
+  --bg:        #0d1117;
+  --bg2:       #161b22;
+  --bg3:       #1f2937;
+  --panel:     #21293a;
+  --border:    #2d3748;
+  --border2:   #3d4f66;
+  --gold:      #f5c842;
+  --gold2:     #e8a820;
+  --gold-dim:  rgba(245,200,66,0.12);
+  --teal:      #38bdf8;
+  --teal-dim:  rgba(56,189,248,0.1);
+  --green:     #4ade80;
+  --green-dim: rgba(74,222,128,0.1);
+  --red:       #f87171;
+  --red-dim:   rgba(248,113,113,0.12);
+  --orange:    #fb923c;
+  --orange-dim:rgba(251,146,60,0.1);
+  --text:      #e2e8f0;
+  --text2:     #94a3b8;
+  --text3:     #64748b;
+  --white:     #f8fafc;
+  --serif:     'Lora', Georgia, 'Times New Roman', serif;
+  --sans:      'Outfit', system-ui, sans-serif;
+  --mono:      'Fira Code', 'Courier New', monospace;
+  --radius:    10px;
+  --shadow:    0 4px 24px rgba(0,0,0,0.5);
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--serif);background:var(--bg);color:var(--text);line-height:1.85;overflow-x:hidden;}
+a{color:var(--teal);text-decoration:none}
+a:hover{text-decoration:underline}
+img{max-width:100%}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+
+/* ============================================================
+   LAYOUT SHELL
+   ============================================================ */
+.shell{display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:270px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);
+  position:sticky;top:0;height:100vh;overflow-y:auto;padding:0 0 2rem;display:flex;flex-direction:column;z-index:50;
+}
+.sidebar-logo{padding:1.4rem 1.4rem 1rem;border-bottom:1px solid var(--border);flex-shrink:0;}
+.sidebar-logo .badge{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);background:var(--gold-dim);padding:3px 8px;border-radius:4px;display:inline-block;margin-bottom:0.5rem;}
+.sidebar-logo h1{font-family:var(--sans);font-size:1rem;font-weight:700;color:var(--white);line-height:1.3;}
+.sidebar-logo p{font-size:12px;color:var(--text3);font-family:var(--sans);margin-top:2px;}
+
+.progress-ring-wrap{padding:1rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:1rem;}
+.progress-ring-wrap svg{flex-shrink:0}
+.ring-track{fill:none;stroke:var(--border2);stroke-width:3.5}
+.ring-fill{fill:none;stroke:var(--gold);stroke-width:3.5;stroke-linecap:round;stroke-dasharray:100.53;stroke-dashoffset:100.53;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset 0.6s ease;}
+.ring-text{font-family:var(--sans);font-size:10px;fill:var(--gold);font-weight:700;text-anchor:middle;dominant-baseline:middle}
+.progress-ring-wrap .info{flex:1}
+.progress-ring-wrap .info .label{font-family:var(--sans);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px}
+.progress-ring-wrap .info .count{font-family:var(--sans);font-size:1.1rem;font-weight:700;color:var(--white)}
+
+.nav-section{padding:0.8rem 1.4rem 0.3rem}
+.nav-section-label{font-family:var(--sans);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:0.5rem;}
+.nav-item{display:flex;align-items:center;gap:0.6rem;padding:0.45rem 0.7rem;border-radius:7px;cursor:pointer;font-family:var(--sans);font-size:13px;color:var(--text2);transition:all 0.2s;margin-bottom:2px;}
+.nav-item:hover{background:var(--bg3);color:var(--white)}
+.nav-item.active{background:var(--gold-dim);color:var(--gold)}
+.nav-item .dot{width:7px;height:7px;border-radius:50%;background:var(--border2);flex-shrink:0;transition:all 0.2s;}
+.nav-item.done .dot{background:var(--green)}
+.nav-item.active .dot{background:var(--gold);box-shadow:0 0 6px var(--gold)}
+
+/* ── MAIN CONTENT ── */
+.main{flex:1;min-width:0;max-width:860px;margin:0 auto;padding:0 2.5rem 6rem}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{padding:4rem 0 3rem;position:relative;}
+.hero::before{content:'';position:absolute;top:0;left:-2.5rem;right:-2.5rem;height:3px;background:linear-gradient(90deg,transparent,var(--gold),var(--teal),transparent);}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:0.5rem;font-family:var(--mono);font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal);margin-bottom:1.2rem;}
+.hero-eyebrow span{width:24px;height:1px;background:var(--teal);display:block;}
+.hero h1{font-family:var(--sans);font-size:clamp(2.2rem,5vw,3.8rem);font-weight:900;line-height:1.1;letter-spacing:-1px;color:var(--white);margin-bottom:1rem;}
+.hero h1 .accent{background:linear-gradient(90deg,var(--gold),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-desc{font-size:1.05rem;color:var(--text2);max-width:580px;line-height:1.7;margin-bottom:2rem;}
+.hero-stats{display:flex;gap:1.5rem;flex-wrap:wrap;}
+.stat-pill{display:flex;align-items:center;gap:0.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.5rem 1rem;font-family:var(--sans);font-size:13px;color:var(--text2);}
+.stat-pill .icon{font-size:1rem}
+.stat-pill strong{color:var(--white)}
+
+/* ============================================================
+   CHAPTER HEADERS & UI ELEMENTS
+   ============================================================ */
+.ch-header{margin:4rem 0 2rem;padding:2rem 2rem 1.6rem;background:var(--bg2);border:1px solid var(--border);border-radius:14px;position:relative;overflow:hidden;}
+.ch-header::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--gold-dim),transparent 60%);pointer-events:none;}
+.ch-header .ch-num{font-family:var(--mono);font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:0.5rem;}
+.ch-header h2{font-family:var(--sans);font-size:1.9rem;font-weight:800;color:var(--white);margin-bottom:0.6rem;}
+.ch-header .ch-desc{color:var(--text2);font-size:0.95rem;font-family:var(--sans);}
+
+.topic{margin:2.5rem 0;opacity:0;transform:translateY(16px);transition:opacity 0.5s ease,transform 0.5s ease;}
+.topic.visible{opacity:1;transform:none}
+.topic-title{display:flex;align-items:center;gap:0.7rem;margin-bottom:1rem;}
+.topic-title h3{font-family:var(--sans);font-size:1.25rem;font-weight:700;color:var(--white);}
+.topic-title .marker{width:32px;height:32px;border-radius:8px;background:var(--teal-dim);border:1px solid var(--teal);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.check-btn{margin-left:auto;width:26px;height:26px;border-radius:50%;border:2px solid var(--border2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all 0.2s;flex-shrink:0;color:transparent;}
+.check-btn:hover{border-color:var(--green);background:var(--green-dim)}
+.check-btn.checked{border-color:var(--green);background:var(--green);color:var(--bg)}
+
+p{margin-bottom:0.9rem;color:var(--text);font-size:0.97rem}
+
+.box{border-radius:var(--radius);padding:1.2rem 1.4rem;margin:1.3rem 0;border-left:4px solid;}
+.box .box-label{font-family:var(--sans);font-size:10px;letter-spacing:2.5px;text-transform:uppercase;font-weight:700;margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;}
+.box p{margin:0;font-size:0.93rem}
+.box.def{background:var(--gold-dim);border-color:var(--gold)}
+.box.def .box-label{color:var(--gold)}
+.box.eg{background:var(--teal-dim);border-color:var(--teal)}
+.box.eg .box-label{color:var(--teal)}
+.box.tip{background:var(--red-dim);border-color:var(--red)}
+.box.tip .box-label{color:var(--red)}
+.box.note{background:var(--orange-dim);border-color:var(--orange)}
+.box.note .box-label{color:var(--orange)}
+
+.formula{background:var(--bg);border:1px solid var(--border2);border-radius:var(--radius);margin:1.3rem 0;overflow:hidden;}
+.formula-head{background:var(--bg3);padding:0.5rem 1rem;font-family:var(--sans);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border);}
+.formula-body{padding:1.2rem 1.5rem;font-family:var(--mono);font-size:0.95rem;color:var(--gold);line-height:2.2;}
+.formula-body .f-note{font-size:0.78rem;color:var(--text2);font-family:var(--sans);margin-top:0.2rem;line-height:1.5;}
+
+.tbl-wrap{overflow-x:auto;margin:1.3rem 0;border-radius:var(--radius);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse}
+thead tr{background:var(--bg3)}
+thead th{padding:0.75rem 1rem;font-family:var(--sans);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);text-align:left;border-bottom:1px solid var(--border);}
+tbody td{padding:0.7rem 1rem;font-size:0.88rem;border-bottom:1px solid var(--border);vertical-align:top;color:var(--text);font-family:var(--sans);}
+tbody tr:last-child td{border-bottom:none}
+
+.bl{list-style:none;padding:0;margin:0.8rem 0 1rem}
+.bl li{padding:0.35rem 0 0.35rem 1.6rem;position:relative;font-size:0.93rem;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);}
+.bl li:last-child{border-bottom:none}
+.bl li::before{content:'▶';color:var(--teal);font-size:8px;position:absolute;left:2px;top:0.6rem;}
+
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);margin:3rem 0;}
+
+.topbar{position:sticky;top:0;background:rgba(13,17,23,0.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);z-index:40;padding:0.6rem 2.5rem;display:flex;align-items:center;justify-content:space-between;font-family:var(--sans);font-size:13px;margin:0 -2.5rem;}
+.topbar .tb-left{color:var(--text3);display:flex;align-items:center;gap:0.5rem}
+.topbar .tb-left strong{color:var(--text2)}
+.topbar .tb-right{display:flex;align-items:center;gap:0.5rem;color:var(--text3)}
+.pbar{height:2px;background:var(--border);width:120px;border-radius:99px;overflow:hidden;}
+.pbar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--teal));border-radius:99px;width:0%;transition:width 0.4s ease;}
+
+/* ============================================================
+   MINI QUIZ STYLES
+   ============================================================ */
+.mini-quiz{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-top:2rem;}
+.mini-quiz h4{font-family:var(--sans);font-size:1.1rem;color:var(--gold);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;}
+.quiz-q{margin-bottom:1.5rem;}
+.quiz-q:last-child{margin-bottom:0;}
+.q-text{font-family:var(--sans);font-size:0.95rem;color:var(--white);margin-bottom:0.8rem;font-weight:500;}
+.options{display:flex;flex-direction:column;gap:0.5rem;}
+.opt{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:0.6rem 1rem;font-family:var(--sans);font-size:0.9rem;color:var(--text);cursor:pointer;text-align:left;transition:all 0.2s;}
+.opt:hover:not(:disabled){border-color:var(--teal);background:var(--teal-dim);}
+.opt.correct{border-color:var(--green)!important;background:var(--green-dim)!important;color:var(--green)!important;}
+.opt.wrong{border-color:var(--red)!important;background:var(--red-dim)!important;color:var(--red)!important;}
+.opt:disabled{cursor:default;}
+.q-feedback{font-family:var(--sans);font-size:0.85rem;margin-top:0.5rem;padding:0.6rem;border-radius:6px;display:none;}
+.q-feedback.show{display:block;}
+.q-feedback.ok{background:var(--green-dim);color:var(--green);border:1px solid rgba(74,222,128,0.2);}
+.q-feedback.fail{background:var(--red-dim);color:var(--red);border:1px solid rgba(248,113,113,0.2);}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="badge">ECON 121</div>
+    <h1>Principles of Macroeconomics</h1>
+    <p>BS Economics · 1st Semester</p>
+  </div>
+
+  <div class="progress-ring-wrap">
+    <svg width="44" height="44" viewBox="0 0 44 44">
+      <circle class="ring-track" cx="22" cy="22" r="16"/>
+      <circle class="ring-fill" id="ringFill" cx="22" cy="22" r="16"/>
+      <text class="ring-text" id="ringPct" x="22" y="22">0%</text>
+    </svg>
+    <div class="info">
+      <div class="label">Your Progress</div>
+      <div class="count"><span id="doneCount">0</span> / <span id="totalCount">0</span> topics</div>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Chapter 1: Introduction</div>
+    <div class="nav-item" data-target="t1-1"><div class="dot"></div>What is Macroeconomics?</div>
+    <div class="nav-item" data-target="t1-2"><div class="dot"></div>Scope & Macro Variables</div>
+    <div class="nav-item" data-target="t1-3"><div class="dot"></div>Business Cycles</div>
+    <div class="nav-item" data-target="t1-4"><div class="dot"></div>Classical vs Keynesian</div>
+    <div class="nav-item" data-target="t1-5"><div class="dot"></div>Say's Law & Markets</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Chapter 2: National Income</div>
+    <div class="nav-item" data-target="t2-1"><div class="dot"></div>GDP &amp; GNP</div>
+    <div class="nav-item" data-target="t2-2"><div class="dot"></div>Factor Cost vs Market Price</div>
+    <div class="nav-item" data-target="t2-3"><div class="dot"></div>Three Approaches</div>
+    <div class="nav-item" data-target="t2-4"><div class="dot"></div>Circular Flow Model</div>
+    <div class="nav-item" data-target="t2-5"><div class="dot"></div>Real vs Nominal Income</div>
+    <div class="nav-item" data-target="t2-6"><div class="dot"></div>Per Capita & Welfare</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Chapter 3: Aggregate Demand</div>
+    <div class="nav-item" data-target="t3-1"><div class="dot"></div>Open/Closed & Agg. Markets</div>
+    <div class="nav-item" data-target="t3-2"><div class="dot"></div>Consumption Function</div>
+    <div class="nav-item" data-target="t3-3"><div class="dot"></div>Investment & Gov Spending</div>
+    <div class="nav-item" data-target="t3-4"><div class="dot"></div>Income Identities</div>
+    <div class="nav-item" data-target="t3-5"><div class="dot"></div>Monetary & Fiscal Policy</div>
+  </div>
+</aside>
+
+<div class="main">
+
+  <div class="topbar">
+    <div class="tb-left">📚 <strong>ECON 121</strong> — Principles of Macroeconomics</div>
+    <div class="tb-right">
+      <span id="topPct">0%</span>
+      <div class="pbar"><div class="pbar-fill" id="topBar"></div></div>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="hero-eyebrow"><span></span>Interactive Self-Learning Edition<span></span></div>
+    <h1>Principles of<br><span class="accent">Macroeconomics</span></h1>
+    <p class="hero-desc">Master every concept step-by-step. Read the simple explanations, study your teacher's exact notes, and test your knowledge with interactive mini-quizzes at the end of every topic!</p>
+    <div class="hero-stats">
+      <div class="stat-pill"><span class="icon">📘</span> <strong>3</strong>&nbsp;Chapters</div>
+      <div class="stat-pill"><span class="icon">📝</span> <strong>Teacher Notes</strong>&nbsp;Integrated</div>
+      <div class="stat-pill"><span class="icon">🧪</span> <strong>Mini-Quizzes</strong>&nbsp;Included</div>
+    </div>
+  </header>
+
+  <div class="ch-header">
+    <div class="ch-num">Chapter 01 of 03</div>
+    <h2>Introduction to Macroeconomics</h2>
+    <p class="ch-desc">Understand what macroeconomics is, the Big Three concerns, and the monumental shift from Classical to Keynesian economics.</p>
+  </div>
+
+  <section class="topic" id="t1-1">
+    <div class="topic-title">
+      <div class="marker">🌍</div>
+      <h3>What is Macroeconomics?</h3>
+      <button class="check-btn" onclick="toggleDone(this,'t1-1')">✓</button>
+    </div>
+    <p>Macroeconomics studies the economy as a whole. While microeconomics focuses on individual units (like a single person making a budget or a single company setting a price), macroeconomics looks at the aggregate (total) performance of an entire nation.</p>
+    
+    <div class="box eg">
+      <div class="box-label">🌍 Real-Life Beginner Example</div>
+      <p>Imagine a single shopkeeper in Batkhela deciding whether to sell apples or oranges. That is <strong>Microeconomics</strong>. <br>Now, imagine looking at the total income of everyone in Pakistan combined, or figuring out why prices across the whole country are going up. That is <strong>Macroeconomics</strong>.</p>
+    </div>
+
+    <div class="box tip">
+      <div class="box-label">🔴 Teacher Note — The "Big Three" Concerns</div>
+      <p>Your teacher emphasizes three core concerns of macroeconomics that you must know[cite: 8]:<br>
+      1. <strong>Inflation:</strong> A sustained rise in the general price level.<br>
+      2. <strong>GDP Growth:</strong> The increase in national output.<br>
+      3. <strong>Unemployment:</strong> People willing to work but unable to find jobs.</p>
+    </div>
+
+    <div class="mini-quiz">
+      <h4>🧪 Topic Checkpoint</h4>
+      <div class="quiz-q">
+        <div class="q-text">1. Which of the following is a Macroeconomic concern?</div>
+        <div class="options">
+          <button class="opt" onclick="checkAnswer(this, false, 'A single firm\'s profit is Microeconomics.')">A. A shoe factory deciding to increase its prices.</button>
+          <button class="opt" onclick="checkAnswer(this, true, 'Correct! Unemployment across the whole country is a key Macroeconomic concern.')">B. The total unemployment rate of the country.</button>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+      <div class="quiz-q">
+        <div class="q-text">2. According to your notes, what are the "Big Three" concerns of macroeconomics?</div>
+        <div class="options">
+          <button class="opt" onclick="checkAnswer(this, true, 'Excellent! These are exactly the three concerns listed in your syllabus.')">A. Inflation, GDP Growth, and Unemployment.</button>
+          <button class="opt" onclick="checkAnswer(this, false, 'Wages, Rent, and Interest are factor incomes, not the Big Three concerns.')">B. Wages, Rent, and Interest.</button>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic" id="t1-2">
+    <div class="topic-title">
+      <div class="marker">🔭</div>
+      <h3>Scope, Variables & Macro-Models</h3>
+      <button class="check-btn" onclick="toggleDone(this,'t1-2')">✓</button>
+    </div>
+    <p>Macroeconomics covers a wide range of topics including national output, employment, inflation, economic growth, and government policy. The key variables we look at include GDP, Inflation Rate, Unemployment Rate, and Interest Rates. These variables have a <strong>mutual relationship</strong>.</p>
+    
+    <div class="box eg">
+      <div class="box-label">🌍 Real-Life Beginner Example</div>
+      <p>Think of variables like medicines. If the government gives a medicine to cure one disease (e.g., lowering interest rates to fix high unemployment), it might accidentally cause a side-effect (causing inflation to go up). They are all connected!</p>
+    </div>
+
+    <div class="box note">
+      <div class="box-label">💡 Macro-Models as Abstractions</div>
+      <p>Real economies involve millions of people and billions of transactions. Economists simplify this reality by creating <strong>models</strong> (like the Circular Flow or AD-AS model). These models are "abstractions from the real economy" designed to show how key variables interact without getting lost in the details.</p>
+    </div>
+
+    <div class="mini-quiz">
+      <h4>🧪 Topic Checkpoint</h4>
+      <div class="quiz-q">
+        <div class="q-text">1. Why do economists use macro-models?</div>
+        <div class="options">
+          <button class="opt" onclick="checkAnswer(this, false, 'Models actually simplify things, they do not make them more complicated.')">A. To make economic theories more complicated.</button>
+          <button class="opt" onclick="checkAnswer(this, true, 'Correct! Models are abstractions that help us understand complex real-world relationships simply.')">B. To act as an abstraction from the real economy to show how key variables interact.</button>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic" id="t1-3">
+    <div class="topic-title">
+      <div class="marker">🔄</div>
+      <h3>Business Cycles: Boom and Depression</h3>
+      <button class="check-btn" onclick="toggleDone(this,'t1-3')">✓</button>
+    </div>
+    <p>The economy never grows in a perfectly straight line. It experiences rhythmic up-and-down movements called the <strong>business cycle</strong>. The highest point is the peak (Boom), and the lowest point is the trough (Depression).</p>
+    
+    <div class="box eg">
+      <div class="box-label">🌍 Real-Life Beginner Example</div>
+      <p>During a <strong>Boom</strong>, businesses are making a lot of money and hiring easily. During a <strong>Depression</strong> (like during the global COVID-19 lockdowns), businesses close down, and many people lose their jobs. The economy breathes in and out over time.</p>
+    </div>
+
+    <div class="box def">
+      <div class="box-label">📖 Definition</div>
+      <p>A Business Cycle is the fluctuation in economic activity (GDP) over time. A severe and prolonged contraction is known as a <strong>Depression</strong> (like the Great Depression of the 1930s)[cite: 8].</p>
+    </div>
+
+    <div class="mini-quiz">
+      <h4>🧪 Topic Checkpoint</h4>
+      <div class="quiz-q">
+        <div class="q-text">1. What is the highest point of a business cycle called?</div>
+        <div class="options">
+          <button class="opt" onclick="checkAnswer(this, true, 'Correct! The peak or boom is the highest point.')">A. Boom (Peak)</button>
+          <button class="opt" onclick="checkAnswer(this, false, 'Depression (Trough) is the lowest point, not the highest.')">B. Depression (Trough)</button>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic" id="t1-4">
+    <div class="topic-title">
+      <div class="marker">⚖️</div>
+      <h3>Classical vs. Keynesian Economics</h3>
+      <button class="check-btn" onclick="toggleDone(this,'t1-4')">✓</button>
+    </div>
+    <p>The term "Classical" was first used by <strong>Karl Marx</strong> to describe the theories of early economists like David Ricardo. Later, John Maynard Keynes used the term to refer to the old school of thought.</p>
+
+    <div class="box tip">
+      <div class="box-label">🔴 Exam Focus: 5 Assumptions of the Classical Model</div>
+      <p>Your teacher explicitly lists these 5 core assumptions of classical economics[cite: 44]:</p>
+      <ul class="bl">
+        <li><strong>Full Employment:</strong> There is always full employment in the economy[cite: 45, 46].</li>
+        <li><strong>Self-Correcting:</strong> Any departure from full employment is "short-lived" (quick correction)[cite: 48, 54].</li>
+        <li><strong>Flexible Wages:</strong> The wage rate is flexible so full employment is automatically restored[cite: 54].</li>
+        <li><strong>Laissez-faire Capitalism:</strong> No government intervention in economic activities[cite: 54, 57, 58].</li>
+        <li><strong>Perfect Competition:</strong> Exists in all markets (labor, money, product)[cite: 54].</li>
+      </ul>
+    </div>
+
+    <h4 style="color:var(--gold);font-family:var(--sans);margin:1.5rem 0 0.5rem;font-size:1rem;">The Classical Theory of Output & Employment</h4>
+    <p>In the classical model, labor is the only variable factor of production in the short run. Output is a function of employment: <i>Y = f(N)</i>[cite: 82, 85, 86, 91]. The profit-maximizing condition for employers is when the <strong>Marginal Physical Productivity (MPP) equals the real wage rate (w/p)</strong>[cite: 75, 76, 79, 80].</p>
+    
+    <h4 style="color:var(--teal);font-family:var(--sans);margin:1.5rem 0 0.5rem;font-size:1rem;">The Keynesian Revolution</h4>
+    <p>The Great Depression of the 1930s proved that markets do *not* always fix themselves. John Maynard Keynes wrote <em>"The General Theory of Employment, Interest and Money"</em> (1936)[cite: 5, 8, 10, 11, 12]. Keynes argued that economies can get stuck in high unemployment and the government <strong>must</strong> step in to help.</p>
+
+    <div class="mini-quiz">
+      <h4>🧪 Topic Checkpoint</h4>
+      <div class="quiz-q">
+        <div class="q-text">1. According to the Classical Model, what should the government do during an economic crisis?</div>
+        <div class="options">
+          <button class="opt" onclick="checkAnswer(this, false, 'This is the Keynesian view, not the Classical view.')">A. Step in and spend money to create jobs.</button>
+          <button class="opt" onclick="checkAnswer(this, true, 'Correct! Classicals believed in laissez-faire—meaning no government interference, as the market will fix itself.')">B. Nothing (Laissez-faire). The market will self-correct automatically.</button>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+      <div class="quiz-q">
+        <div class="q-text">2. What major event proved the Classical model wrong and led to the Keynesian Revolution?</div>
+        <div class="options">
+          <button class="opt" onclick="checkAnswer(this, true, 'Correct! The Great Depression proved that unemployment could last a very long time without government help.')">A. The Great Depression of the 1930s.</button>
+          <button class="opt" onclick="checkAnswer(this, false, 'No, the Keynesian revolution started much earlier, in 1936.')">B. The invention of computers in the 1990s.</button>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic" id="t1-5">
+    <div class="topic-title">
+      <div class="marker">📈</div>
+      <h3>Say's Law of Markets</h3>
+      <button class="check-btn" onclick="toggleDone(this,'t1-5')">✓</button>
+    </div>
+    <p>Developed by French economist Jean-Baptiste Say (1767-1832), this is the foundation of Classical Macroeconomics[cite: 491, 509].</p>
+
+    <div class="box def">
+      <div class="box-label">📖 Say's Law</div>
+      <p><strong>"Supply creates its own demand."</strong>[cite: 491]. Say asserted that general overproduction (or a glut) is impossible. Producing goods generates the exact amount of income needed to buy those goods[cite: 491, 516].</p>
+    </div>
+
+    <div class="box eg">
+      <div class="box-label">🌍 Real-Life Beginner Example</div>
+      <p>If you build 10 wooden tables, you will have to pay workers to cut the wood and build them. Say's Law argues that the money you paid to those workers is *exactly* enough money for them to go out and buy the tables. Therefore, there can never be a shortage of demand.</p>
+    </div>
+
+    <p>Classicals believed that <strong>Savings (S) and Investment (I) are both functions of the interest rate (r)</strong>. If people save money instead of spending it, the interest rate will adjust automatically until <i>Savings = Investment (S = I)</i>, keeping the economy balanced[cite: 505].</p>
+
+    <div class="mini-quiz">
+      <h4>🧪 Topic Checkpoint</h4>
+      <div class="quiz-q">
+        <div class="q-text">1. What is the core phrase of Say's Law?</div>
+        <div class="options">
+          <button class="opt" onclick="checkAnswer(this, true, 'Correct! Say believed that producing goods automatically gives people the income to buy them.')">A. Supply creates its own demand.</button>
+          <button class="opt" onclick="checkAnswer(this, false, 'This is not Say\'s Law. Say\'s Law focuses on Supply creating Demand.')">B. Demand creates its own supply.</button>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <div class="ch-header">
+    <div class="ch-num">Chapter 02 of 03</div>
+    <h2>National Income Accounting</h2>
+    <p class="ch-desc">Master GDP, GNP, the Three Approaches, and the Circular Flow. Pay close attention to your teacher's specific definitions and precautions here.</p>
+  </div>
+
+  <section class="topic" id="t2-1">
+    <div class="topic-title">
+      <div class="marker">🏛️</div>
+      <h3>GDP vs GNP</h3>
+      <button class="check-btn" onclick="toggleDone(this,'t2-1')">✓</button>
+    </div>
+    <p>This is the most important distinction in all of macroeconomics!</p>
+
+    <div class="box def">
+      <div class="box-label">📖 GDP (Gross Domestic Product)</div>
+      <p>The market value of all final goods and services produced <strong>within the geographical boundaries</strong> of a country by domestically located factors of production in a given year[cite: 131, 143, 144, 146, 184, 185, 186, 191, 364]. (Location matters).</p>
+    </div>
+
+    <div class="box def">
+      <div class="box-label">📖 GNP (Gross National Product)</div>
+      <p>The market value of all final goods and services produced by <strong>domestically owned</strong> factors of production in a given year[cite: 198, 201, 364]. (Ownership/Nationality matters).</p>
+    </div>
+
+    <div class="box eg">
+      <div class="box-label">🌍 Real-Life Beginner Example</div>
+      <p>If a Pakistani worker travels to Saudi Arabia to work, their income counts toward Pakistan's <strong>GNP</strong> (because they are a Pakistani national) but it counts toward Saudi Arabia's <strong>GDP</strong> (because the physical work was done inside Saudi borders).</p>
+    </div>
+
+    <div class="mini-quiz">
+      <h4>🧪 Topic Checkpoint</h4>
+      <div class="quiz-q">
+        <div class="q-text">1. A Chinese company opens a mobile phone factory in Karachi, Pakistan. Where is this production counted?</div>
+        <div class="options">
+          <button class="opt" onclick="checkAnswer(this, false, 'Incorrect. Since it is a Chinese-owned company, it adds to China\'s GNP, not Pakistan\'s.')">A. Pakistan's GNP.</button>
+          <button class="opt" onclick="checkAnswer(this, true, 'Correct! Because the factory is physically located inside Pakistan\'s borders, it counts towards Pakistan\'s GDP.')">B. Pakistan's GDP.</button>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+      <div class="quiz-q">
+        <div class="q-text">2. Which concept focuses strictly on geographical boundaries (Location)?</div>
+        <div class="options">
+          <button class="opt" onclick="checkAnswer(this, true, 'Correct! GDP focuses on boundaries.')">A. GDP (Gross Domestic Product)</button>
+          <button class="opt" onclick="checkAnswer(this, false, 'GNP focuses on the nationality of the owner, not the location.')">B. GNP (Gross National Product)</button>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic" id="t2-2">
+    <div class="topic-title">
+      <div class="marker">💲</div>
+      <h3>GDP at Factor Cost vs. Market Prices</h3>
+      <button class="check-btn" onclick="toggleDone(this,'t2-2')">✓</button>
+    </div>
+    <p><strong>GDP at Factor Cost</strong> is the value of output measured in terms of the cost of factors of production (wages, rent, interest, profit) used to produce it—before adding indirect taxes or subtracting subsidies.</p>
+    <p><strong>GDP at Market Prices</strong> is the value of output at the prices buyers actually pay in the market, which includes indirect taxes (like GST) and excludes subsidies.</p>
+
+    <div class="formula">
+      <div class="formula-head">🔢 Conversion Formulas</div>
+      <div class="formula-body">
+        GDP at Market Prices = GDP at Factor Cost + Indirect Taxes − Subsidies<br>
+        GDP at Factor Cost = GDP at Market Prices − Indirect Taxes + Subsidies
+      </div>
+    </div>
+
+    <div class="mini-quiz">
+      <h4>🧪 Topic Checkpoint</h4>
+      <div class="quiz-q">
+        <div class="q-text">1. A factory makes a shirt for Rs. 500 (Factor Cost). The government adds Rs. 50 in GST (Tax). What is the Market Price?</div>
+        <div class="options">
+          <button class="opt" onclick="checkAnswer(this, true, 'Correct! Factor Cost + Tax = Market Price (500 + 50 = 550).')">A. Rs. 550</button>
+          <button class="opt" onclick="checkAnswer(this, false, 'Taxes are added to the factor cost to get the market price, not subtracted.')">B. Rs. 450</button>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic" id="t2-3">
+    <div class="topic-title">
+      <div class="marker">📊</div>
+      <h3>Three Approaches to Computing National Income</h3>
+      <button class="check-btn" onclick="toggleDone(this,'t2-3')">✓</button>
+    </div>
+    <p>Your teacher outlines three methods to measure National Income. Amazingly, all three methods will give you the exact same final number![cite: 125, 127, 354]</p>
+
+    <h4 style="color:var(--teal);font-family:var(--sans);margin:1.2rem 0 0.5rem;font-size:1rem;">1. Product Approach (Value Added Method)</h4>
+    <p>Measures the market value of newly produced, final goods[cite: 128, 152, 153]. We only take <strong>final goods</strong> and exclude intermediate goods to avoid the danger of double counting[cite: 161, 165, 170, 172, 174, 175, 364].</p>
+
+    <h4 style="color:var(--teal);font-family:var(--sans);margin:1.2rem 0 0.5rem;font-size:1rem;">2. Expenditure Approach</h4>
+    <p>Total spending on final goods and services[cite: 220]. The components are:<br>
+    <i>GDP = C + I + G + (X − M)</i> [cite: 278]</p>
+    <ul class="bl">
+      <li><strong>Consumption (C):</strong> Spending by domestic households on durables, non-durables, and services.</li>
+      <li><strong>Investment (I):</strong> Spending on new capital goods, including Business fixed investment and Residential investment.</li>
+      <li><strong>Government Purchases (G):</strong> Expenditures for current produced goods/services. <em>Exam Note:</em> Transfer payments (welfare, unemployment) are <strong>excluded</strong> from G[cite: 223, 228, 241, 243, 244].</li>
+      <li><strong>Net Exports (X - M):</strong> Exports minus Imports.</li>
+    </ul>
+
+    <h4 style="color:var(--teal);font-family:var(--sans);margin:1.2rem 0 0.5rem;font-size:1rem;">3. Income Approach</h4>
+    <p>Calculated by adding the income earned by factors used to produce goods. Your notes list 5 specific components[cite: 316, 317, 319, 323, 324, 326, 336, 339]: Compensation of employees, Proprietor's income, Rental incomes, Corporate profits, and Net interests.</p>
+
+    <div class="mini-quiz">
+      <h4>🧪 Topic Checkpoint</h4>
+      <div class="quiz-q">
+        <div class="q-text">1. Which formula represents the Expenditure Approach?</div>
+        <div class="options">
+          <button class="opt" onclick="checkAnswer(this, true, 'Correct! C (Consumption) + I (Investment) + G (Gov Spending) + (X-M) (Net Exports).')">A. GDP = C + I + G + (X - M)</button>
+          <button class="opt" onclick="checkAnswer(this, false, 'This represents the Income approach, not the Expenditure approach.')">B. GDP = Wages + Rent + Interest + Profit</button>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+      <div class="quiz-q">
+        <div class="q-text">2. Why do we only count "final goods" in the Product Approach?</div>
+        <div class="options">
+          <button class="opt" onclick="checkAnswer(this, false, 'Intermediate goods do have value, but counting them alongside the final good causes mathematical errors.')">A. Because intermediate goods have no value.</button>
+          <button class="opt" onclick="checkAnswer(this, true, 'Correct! If we counted the flour AND the bread made from that flour, we would be counting the flour twice.')">B. To avoid the danger of double counting.</button>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic" id="t2-4">
+    <div class="topic-title">
+      <div class="marker">🔁</div>
+      <h3>The Circular Flow of Income (Two-Sector Economy)</h3>
+      <button class="check-btn" onclick="toggleDone(this,'t2-4')">✓</button>
+    </div>
+    <p>The circular flow shows how money and goods circulate between the Household Sector and the Business Sector[cite: 374, 403].</p>
+
+    <div class="box note">
+      <div class="box-label">💡 Teacher's 8 Assumptions for the Simple Model</div>
+      <p>Your teacher outlined these assumptions for the basic 2-sector model[cite: 425]:<br>
+      1. Only 2 sectors exist (Household and Business).<br>
+      2. Household owns all factors of production.<br>
+      3. Household is the sole buyer of goods/services and spends its <em>entire</em> income.<br>
+      4. Business sells its entire output (no inventory).<br>
+      5. <strong>No savings and no investment.</strong><br>
+      6. Household receives income by selling/renting factors of production.<br>
+      7. No Government (no taxes, subsidies, public expenditure).<br>
+      8. Closed Economy (no international trade).</p>
+    </div>
+
+    <p><strong>Upper Loop (Product Market):</strong> Businesses provide goods/services to households. Households make consumption expenditures (money flows to businesses)[cite: 434, 440, 461, 462, 463, 466, 483, 484].<br>
+    <strong>Lower Loop (Factor Market):</strong> Households sell factors of production (land, labor, capital). Businesses pay factor incomes (wages, rent, interest)[cite: 404, 405, 489].</p>
+
+    <div class="mini-quiz">
+      <h4>🧪 Topic Checkpoint</h4>
+      <div class="quiz-q">
+        <div class="q-text">1. In the simple 2-sector model, what do Households provide to Businesses in the lower loop?</div>
+        <div class="options">
+          <button class="opt" onclick="checkAnswer(this, false, 'Businesses provide final goods to households, not the other way around.')">A. Final goods and services.</button>
+          <button class="opt" onclick="checkAnswer(this, true, 'Correct! Households provide land, labor, and capital to businesses.')">B. Factors of production (Land, Labor, Capital).</button>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic" id="t2-5">
+    <div class="topic-title">
+      <div class="marker">📉</div>
+      <h3>Real vs. Nominal GNP</h3>
+      <button class="check-btn" onclick="toggleDone(this,'t2-5')">✓</button>
+    </div>
+    <p>If prices go up, it might look like the economy is growing, even if we aren't producing more goods. To find the *true* growth, we have to remove the effect of inflation.</p>
+    <div class="formula">
+      <div class="formula-head">🔢 Definitions & Formulas from Notes</div>
+      <div class="formula-body">
+        <strong>Nominal GNP:</strong> Value of final goods/services in terms of market prices of a given year[cite: 370]. Includes inflation.<br>
+        <strong>Real GNP:</strong> Calculates GNP at constant prices, removing price changes (inflation)[cite: 370]. Shows true volume of output.<br><br>
+        GNP Deflator = (Nominal GNP / Real GNP) [cite: 370]
+      </div>
+    </div>
+
+    <div class="mini-quiz">
+      <h4>🧪 Topic Checkpoint</h4>
+      <div class="quiz-q">
+        <div class="q-text">1. Which measure of GNP gives us a more accurate picture of a country's actual economic growth by removing inflation?</div>
+        <div class="options">
+          <button class="opt" onclick="checkAnswer(this, false, 'Nominal GNP uses current prices, so it is distorted by inflation.')">A. Nominal GNP</button>
+          <button class="opt" onclick="checkAnswer(this, true, 'Correct! Real GNP uses constant prices, filtering out the illusion of inflation.')">B. Real GNP</button>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic" id="t2-6">
+    <div class="topic-title">
+      <div class="marker">👤</div>
+      <h3>Per Capita Income & Social Welfare</h3>
+      <button class="check-btn" onclick="toggleDone(this,'t2-6')">✓</button>
+    </div>
+    <p><strong>Per Capita Income</strong> = Total GDP / Total Population. It represents the average income per person and is used to compare living standards across countries.</p>
+    
+    <div class="box eg">
+      <div class="box-label">🌍 Real-Life Beginner Example</div>
+      <p>If a pizza (GDP) has 8 slices and there are 2 people (Population), everyone gets 4 slices (Per Capita). But if the population grows to 8 people, everyone only gets 1 slice. Per Capita helps us see the *average* slice per person.</p>
+    </div>
+
+    <p>Is GNP a perfect measure of welfare? Your teacher lists 8 specific reasons why the relationship between GNP and national welfare is flawed[cite: 415]:</p>
+    <ul class="bl">
+      <li>It excludes services of housewives and do-it-yourself activities.</li>
+      <li>It includes spending on national defense (which doesn't directly increase civilian happiness).</li>
+      <li>It ignores the leisure enjoyed by workers.</li>
+      <li>It ignores the human cost of producing goods and services.</li>
+      <li>It makes no mention of the distribution of wealth and income.</li>
+      <li>It includes the production of intoxicants and alcoholic beverages.</li>
+      <li>It ignores broader social welfare (education, health, elimination of crime/corruption).</li>
+      <li>It ignores the social costs (like pollution) of producing goods.</li>
+    </ul>
+
+    <div class="mini-quiz">
+      <h4>🧪 Topic Checkpoint</h4>
+      <div class="quiz-q">
+        <div class="q-text">1. Does an increase in a country's total GNP always mean that every citizen is happier and wealthier?</div>
+        <div class="options">
+          <button class="opt" onclick="checkAnswer(this, false, 'GNP ignores wealth distribution; a few rich people can pull the average up while the rest stay poor.')">A. Yes, more money equals more social welfare for everyone.</button>
+          <button class="opt" onclick="checkAnswer(this, true, 'Correct! GNP ignores wealth distribution, pollution, and non-market activities like housework.')">B. No, GNP has many limitations as a measure of social welfare.</button>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <div class="ch-header">
+    <div class="ch-num">Chapter 03 of 03</div>
+    <h2>Components of Aggregate Demand</h2>
+    <p class="ch-desc">Diving into Consumption, the MPC, Investment, Government Spending, and the policies that steer the economy.</p>
+  </div>
+
+  <section class="topic" id="t3-1">
+    <div class="topic-title">
+      <div class="marker">🌐</div>
+      <h3>Open vs. Closed Economy & Aggregate Markets</h3>
+      <button class="check-btn" onclick="toggleDone(this,'t3-1')">✓</button>
+    </div>
+    <p>A <strong>Closed Economy</strong> has no international trade (no exports or imports). It is a theoretical model. An <strong>Open Economy</strong> trades with the rest of the world (this is how the real world operates).</p>
+    <p>Macroeconomics looks at four interconnected aggregate markets:</p>
+    <ul class="bl">
+      <li><strong>Product Market:</strong> Where all goods and services are bought and sold.</li>
+      <li><strong>Money Market:</strong> Demand and supply of money.</li>
+      <li><strong>Labor Market:</strong> Firms demand workers, households supply them.</li>
+      <li><strong>Capital Market:</strong> Financial capital (stocks, bonds, loans) is traded.</li>
+    </ul>
+
+    <div class="mini-quiz">
+      <h4>🧪 Topic Checkpoint</h4>
+      <div class="quiz-q">
+        <div class="q-text">1. Which equation represents a Closed Economy?</div>
+        <div class="options">
+          <button class="opt" onclick="checkAnswer(this, true, 'Correct! In a closed economy, there are no exports or imports (X or M).')">A. GDP = C + I + G</button>
+          <button class="opt" onclick="checkAnswer(this, false, 'This represents an Open Economy because it includes net exports.')">B. GDP = C + I + G + (X - M)</button>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic" id="t3-2">
+    <div class="topic-title">
+      <div class="marker">🛍️</div>
+      <h3>The Consumption Function & Psychological Law</h3>
+      <button class="check-btn" onclick="toggleDone(this,'t3-2')">✓</button>
+    </div>
+    <p>Your teacher heavily focuses on Keynes's views on consumption.</p>
+    <div class="box def">
+      <div class="box-label">📖 The Keynesian Fundamental Psychological Law of Consumption</div>
+      <p>"Men are disposed as a rule and on average to increase their consumption as their income increases, but not by as much as the increase in their income."[cite: 566].</p>
+    </div>
+    
+    <div class="box eg">
+      <div class="box-label">🌍 Real-Life Beginner Example</div>
+      <p>If you get a salary raise of Rs. 10,000, you probably won't spend all Rs. 10,000 on new clothes. You might spend Rs. 8,000 and save Rs. 2,000. Your consumption increased, but <em>not by as much as your income</em>.</p>
+    </div>
+
+    <div class="formula">
+      <div class="formula-head">🔢 Mathematical Form of Consumption</div>
+      <div class="formula-body">
+        <i>C = C<sub>0</sub> + cY<sub>d</sub></i> [cite: 572]
+        <div class="f-note">
+          <i>C<sub>0</sub></i> = Autonomous consumption (Independent of income level. You consume even at zero income by borrowing)[cite: 572].<br>
+          <i>cY<sub>d</sub></i> = Induced consumption (depends on disposable income).<br>
+          <i>c</i> = Marginal Propensity to Consume (MPC).<br>
+          <strong>MPC = &Delta;C / &Delta;Y</strong> [cite: 572]
+        </div>
+      </div>
+    </div>
+
+    <div class="mini-quiz">
+      <h4>🧪 Topic Checkpoint</h4>
+      <div class="quiz-q">
+        <div class="q-text">1. What does "Autonomous Consumption" (C<sub>0</sub>) mean?</div>
+        <div class="options">
+          <button class="opt" onclick="checkAnswer(this, false, 'That is induced consumption, which depends on how much you earn.')">A. The consumption that happens only when you get a bonus at work.</button>
+          <button class="opt" onclick="checkAnswer(this, true, 'Correct! Even if you have zero income, you still need to eat, so you consume by borrowing or using old savings.')">B. The minimum level of consumption you need to survive, even if your income is zero.</button>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic" id="t3-3">
+    <div class="topic-title">
+      <div class="marker">🏗️</div>
+      <h3>Investment & Government Spending</h3>
+      <button class="check-btn" onclick="toggleDone(this,'t3-3')">✓</button>
+    </div>
+    <p><strong>Investment (I)</strong> is business spending on capital goods (factories, machines). It is heavily dependent on the market rate of interest. As your notes point out, <i>I = f(r)</i>, meaning Investment is a function of the interest rate. When interest rates drop, borrowing is cheaper, so investment increases.</p>
+    <p><strong>Government Spending (G)</strong> refers to government purchases of goods and services. Note again: transfer payments are NOT included in G.</p>
+
+    <div class="mini-quiz">
+      <h4>🧪 Topic Checkpoint</h4>
+      <div class="quiz-q">
+        <div class="q-text">1. What happens to Investment when the interest rate (r) goes UP?</div>
+        <div class="options">
+          <button class="opt" onclick="checkAnswer(this, true, 'Correct! Higher interest rates make borrowing expensive, so businesses invest less.')">A. Investment goes DOWN.</button>
+          <button class="opt" onclick="checkAnswer(this, false, 'Higher interest rates do not encourage businesses to take out loans.')">B. Investment goes UP.</button>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic" id="t3-4">
+    <div class="topic-title">
+      <div class="marker">⚖️</div>
+      <h3>Income and Expenditure Identities</h3>
+      <button class="check-btn" onclick="toggleDone(this,'t3-4')">✓</button>
+    </div>
+    <div class="formula">
+      <div class="formula-head">🔢 National Identities</div>
+      <div class="formula-body">
+        <strong>Closed Economy:</strong><br>
+        Y = C + I + G  (Expenditure)<br>
+        Y = C + S + T  (Income allocation)<br>
+        Therefore: I + G = S + T<br><br>
+        <strong>Open Economy:</strong><br>
+        Y = C + I + G + (X - M)
+      </div>
+    </div>
+
+    <div class="mini-quiz">
+      <h4>🧪 Topic Checkpoint</h4>
+      <div class="quiz-q">
+        <div class="q-text">1. In the Closed Economy identity (I + G = S + T), what do the letters S and T stand for?</div>
+        <div class="options">
+          <button class="opt" onclick="checkAnswer(this, true, 'Correct! S = Savings, T = Taxes.')">A. Savings and Taxes.</button>
+          <button class="opt" onclick="checkAnswer(this, false, 'Sales and Tariffs are not the standard variables for this macro identity.')">B. Sales and Tariffs.</button>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="topic" id="t3-5">
+    <div class="topic-title">
+      <div class="marker">🏦</div>
+      <h3>Monetary Policy & Fiscal Policy</h3>
+      <button class="check-btn" onclick="toggleDone(this,'t3-5')">✓</button>
+    </div>
+    <div class="cards">
+      <div class="card c-teal">
+        <span class="c-icon">💸</span>
+        <h4>Monetary Policy</h4>
+        <p>Controlled by the Central Bank (e.g., State Bank of Pakistan). It manages the money supply and interest rates. Lower rates stimulate investment and borrowing.</p>
+      </div>
+      <div class="card c-gold">
+        <span class="c-icon">🏛️</span>
+        <h4>Fiscal Policy</h4>
+        <p>Controlled by the Government. It uses changes in Government Spending (G) and Taxes (T) to influence aggregate demand and stabilize the economy.</p>
+      </div>
+    </div>
+
+    <div class="box eg">
+      <div class="box-label">🌍 Real-Life Beginner Example</div>
+      <p>If the <strong>State Bank of Pakistan</strong> raises interest rates to fight inflation, that is Monetary Policy. If the <strong>Prime Minister</strong> announces a new tax break or a massive spending package to build new highways, that is Fiscal Policy.</p>
+    </div>
+
+    <div class="mini-quiz">
+      <h4>🧪 Topic Checkpoint</h4>
+      <div class="quiz-q">
+        <div class="q-text">1. Who is responsible for Monetary Policy?</div>
+        <div class="options">
+          <button class="opt" onclick="checkAnswer(this, false, 'The government controls Fiscal Policy (Taxes and Spending).')">A. The Government / Parliament.</button>
+          <button class="opt" onclick="checkAnswer(this, true, 'Correct! The Central Bank (like the State Bank of Pakistan) controls Monetary Policy.')">B. The Central Bank.</button>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </div>
+  </section>
+
+</div></div><script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      const id = e.target.id;
+      document.querySelectorAll(`.nav-item[data-target="${id}"]`).forEach(n => {
+        document.querySelectorAll('.nav-item').forEach(ni => ni.classList.remove('active'));
+        n.classList.add('active');
+      });
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.topic').forEach(t => observer.observe(t));
+
+document.querySelectorAll('.nav-item[data-target]').forEach(item => {
+  item.addEventListener('click', () => {
+    const target = document.getElementById(item.dataset.target);
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+const totalTopics = document.querySelectorAll('.topic').length;
+document.getElementById('totalCount').textContent = totalTopics;
+
+function updateProgress() {
+  const done = document.querySelectorAll('.check-btn.checked').length;
+  const pct = Math.round((done / totalTopics) * 100);
+  document.getElementById('doneCount').textContent = done;
+  document.getElementById('topPct').textContent = pct + '%';
+  document.getElementById('topBar').style.width = pct + '%';
+  const circumference = 2 * Math.PI * 16;
+  const offset = circumference - (pct / 100) * circumference;
+  document.getElementById('ringFill').style.strokeDashoffset = offset;
+  document.getElementById('ringPct').textContent = pct + '%';
+}
+updateProgress();
+
+function toggleDone(btn, id) {
+  btn.classList.toggle('checked');
+  const navItem = document.querySelector(`.nav-item[data-target="${id}"]`);
+  if (navItem) navItem.classList.toggle('done');
+  updateProgress();
+}
+
+function checkAnswer(btn, isCorrect, feedback) {
+  const options = btn.parentElement.querySelectorAll('.opt');
+  options.forEach(opt => opt.disabled = true);
+  btn.classList.add(isCorrect ? 'correct' : 'wrong');
+  const fbDiv = btn.parentElement.nextElementSibling;
+  fbDiv.textContent = (isCorrect ? '✅ ' : '❌ ') + feedback;
+  fbDiv.className = 'q-feedback show ' + (isCorrect ? 'ok' : 'fail');
+}
+</script>
+</body>
+</html>
