@@ -9,7 +9,7 @@ A single-file interactive study guide for ECON 121. Covers 3 chapters, 16 topics
 
 ## 🚀 Live Demo
 
-> Deploy on [GitHub Pages](https://pages.github.com/) and paste your link here.
+> Deploy on [GitHub Pages]([https://pages.github.com](https://mustafa-shah-tech.github.io/Macroeconomics/) and paste your link here.
 
 ```
 https://your-username.github.io/econ121/
